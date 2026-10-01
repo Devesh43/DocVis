@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocVis — Intelligent Document Vision System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="dark-theme">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-brand">
+            <div class="logo-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            <div>
+                <h1>DocVis</h1>
+                <span class="sub-title">Intelligent Document Vision System</span>
+            </div>
+        </div>
+        
+        <div class="header-status">
+            <div class="engine-badge" id="engineStatus">
+                <span class="pulse-dot"></span> OpenCV Engine Active
+            </div>
+            <button id="toggleDebugBtn" class="btn btn-outline-tech">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                CV Analysis Mode
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Grid Container -->
+    <main class="app-container">
+        
+        <!-- Left Panel: Input & Controls -->
+        <aside class="panel left-panel">
+            <div class="panel-header">
+                <h2>Source Image</h2>
+                <span class="panel-badge">Step 1</span>
+            </div>
+
+            <!-- Drag and Drop Upload Area -->
+            <div class="upload-dropzone" id="dropZone">
+                <input type="file" id="fileInput" accept="image/*" class="file-input">
+                <div class="dropzone-content">
+                    <div class="upload-icon">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <p class="dropzone-text"><strong>Click to upload</strong> or drag & drop</p>
+                    <p class="dropzone-sub">JPG, PNG, WEBP document photos</p>
+                </div>
+            </div>
+
+            <!-- Preset Sample Images -->
+            <div class="section-block">
+                <label class="section-label">Or Select Sample Document:</label>
+                <div class="sample-pills" id="samplePills">
+                    <button class="sample-btn active" data-sample="invoice">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                        Invoice (Angled)
+                    </button>
+                    <button class="sample-btn" data-sample="receipt">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect></svg>
+                        Receipt
+                    </button>
+                    <button class="sample-btn" data-sample="book_page">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        Book Page
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enhancement Mode Selection -->
+            <div class="section-block">
+                <label class="section-label">Enhancement Mode:</label>
+                <div class="mode-selector">
+                    <label class="radio-card">
+                        <input type="radio" name="enhancementMode" value="original_corrected">
+                        <div class="radio-card-content">
+                            <span class="mode-title">Original Corrected</span>
+                            <span class="mode-desc">Perspective corrected, original colors</span>
+                        </div>
+                    </label>
+                    
+                    <label class="radio-card active">
+                        <input type="radio" name="enhancementMode" value="enhanced_color" checked>
+                        <div class="radio-card-content">
+                            <span class="mode-title">Enhanced Color</span>
+                            <span class="mode-desc">CLAHE + shadow removal + color</span>
+                        </div>
+                    </label>
+
+                    <label class="radio-card">
+                        <input type="radio" name="enhancementMode" value="scanner_bw">
+                        <div class="radio-card-content">
+                            <span class="mode-title">Scanner B&W</span>
+                            <span class="mode-desc">Adaptive Gaussian threshold scan</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Canny Threshold Sliders -->
+            <div class="section-block">
+                <div class="slider-header">
+                    <label class="section-label">Canny Edge Thresholds:</label>
+                    <span class="slider-val" id="cannyValDisplay">50 / 150</span>
+                </div>
+                <div class="threshold-sliders">
+                    <div class="slider-row">
+                        <span>Low:</span>
+                        <input type="range" id="cannyLow" min="10" max="150" value="50">
+                    </div>
+                    <div class="slider-row">
+                        <span>High:</span>
+                        <input type="range" id="cannyHigh" min="50" max="255" value="150">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Primary Actions -->
+            <div class="action-buttons">
+                <button id="processBtn" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    Process Document
+                </button>
+                <button id="applyCornersBtn" class="btn btn-primary hidden" style="background:#f59e0b; border-color:#d97706;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Apply Manual Corners
+                </button>
+                <button id="resetBtn" class="btn btn-secondary">Reset Corners</button>
+            </div>
+        </aside>
+
+        <!-- Center Panel: Interactive Boundary Editor & Stage Viewer -->
+        <section class="panel center-panel">
+            <div class="panel-header">
+                <h2 id="centerTitle">Interactive Corner Alignment</h2>
+                <div class="status-tags">
+                    <span id="detectionBadge" class="badge badge-success">Auto Detected (92%)</span>
+                    <span id="manualNotice" class="badge badge-warning hidden">Manual Corners Active</span>
+                </div>
+            </div>
+
+            <div class="viewer-wrapper">
+                <!-- Interactive Canvas Editor Container -->
+                <div class="canvas-container" id="canvasContainer">
+                    <canvas id="interactiveCanvas"></canvas>
+                    <div id="loadingOverlay" class="loading-overlay hidden">
+                        <div class="spinner"></div>
+                        <p id="loadingText">Processing Computer Vision Pipeline...</p>
+                    </div>
+                </div>
+
+                <!-- Comparison Split Slider View (Hidden by default or toggled) -->
+                <div class="comparison-container hidden" id="comparisonContainer">
+                    <div class="img-comp-slider">
+                        <div class="img-comp-img img-comp-overlay" id="compOverlay">
+                            <img id="compAfterImg" src="" alt="Processed Scan">
+                            <span class="comp-label label-after">Final Processed Scan</span>
+                        </div>
+                        <div class="img-comp-img">
+                            <img id="compBeforeImg" src="" alt="Original Photo">
+                            <span class="comp-label label-before">Original Photograph</span>
+                        </div>
+                        <div class="img-comp-handle" id="compHandle">
+                            <div class="handle-line"></div>
+                            <div class="handle-circle">
+                                &#10094;&#10095;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Toolbar for Center View -->
+            <div class="center-toolbar">
+                <div class="view-toggle-buttons">
+                    <button id="viewInteractiveBtn" class="btn-toggle active">Interactive Editor</button>
+                    <button id="viewComparisonBtn" class="btn-toggle">Before / After Slider</button>
+                </div>
+                <div class="corner-coordinates-info" id="cornerCoordsSummary">
+                    TL: (0,0) | TR: (0,0) | BR: (0,0) | BL: (0,0)
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Panel: Intermediate Stages, Metrics & CV Debug -->
+        <aside class="panel right-panel">
+            
+            <!-- Pipeline Stage Tabs -->
+            <div class="panel-header">
+                <h2>Processing Stages</h2>
+            </div>
+
+            <div class="stage-tabs-container">
+                <button class="stage-tab active" data-stage="enhanced_result">
+                    <span class="tab-num">6</span> Enhanced
+                </button>
+                <button class="stage-tab" data-stage="perspective_corrected">
+                    <span class="tab-num">5</span> Perspective
+                </button>
+                <button class="stage-tab" data-stage="detected_contour">
+                    <span class="tab-num">4</span> Contour
+                </button>
+                <button class="stage-tab" data-stage="edge_map">
+                    <span class="tab-num">3</span> Edge Map
+                </button>
+                <button class="stage-tab" data-stage="grayscale">
+                    <span class="tab-num">2</span> Grayscale
+                </button>
+                <button class="stage-tab" data-stage="original">
+                    <span class="tab-num">1</span> Original
+                </button>
+            </div>
+
+            <!-- Stage Result Image Preview -->
+            <div class="stage-preview-box">
+                <img id="stageImagePreview" src="" alt="Stage Output">
+                <div class="stage-overlay-caption" id="stageCaption">Stage 6: Final Enhanced Scan</div>
+            </div>
+
+            <!-- Download Button -->
+            <div class="download-block">
+                <button id="downloadBtn" class="btn btn-success">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Download Scanned Document
+                </button>
+            </div>
+
+            <!-- Real-time CV Metrics Section -->
+            <div class="metrics-card">
+                <h3>Processing Statistics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <span class="metric-label">Input Resolution</span>
+                        <span class="metric-value" id="metricInputRes">-- x --</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Output Resolution</span>
+                        <span class="metric-value" id="metricOutputRes">-- x --</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Total Execution</span>
+                        <span class="metric-value highlight" id="metricTime">0.0 ms</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Document Area</span>
+                        <span class="metric-value" id="metricArea">0.0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CV Analysis Debug Drawer (Collapsible) -->
+            <div class="cv-analysis-drawer" id="debugDrawer">
+                <div class="drawer-header" id="drawerHeader">
+                    <h3>Computer Vision Analysis</h3>
+                    <span class="drawer-arrow">&#9660;</span>
+                </div>
+                <div class="drawer-content" id="drawerContent">
+                    
+                    <!-- Execution Breakdown -->
+                    <div class="debug-sub">
+                        <h4>Timing Breakdown (ms)</h4>
+                        <div class="timing-bars" id="timingBars">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Homography Matrix Display -->
+                    <div class="debug-sub">
+                        <h4>3x3 Perspective Matrix H</h4>
+                        <div class="matrix-display" id="matrixDisplay">
+                            <!-- Formatted 3x3 matrix -->
+                        </div>
+                    </div>
+
+                    <!-- Contours Evaluated List -->
+                    <div class="debug-sub">
+                        <h4>Top Contours Evaluated</h4>
+                        <div class="contours-list" id="contoursList">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </aside>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
