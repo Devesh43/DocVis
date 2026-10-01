@@ -11,11 +11,11 @@
 
 ---
 
-## 📐 Architecture & Computer Vision Pipeline
+##  Architecture & Computer Vision Pipeline
 
 ```mermaid
 flowchart TD
-    A["📷 Original Photo Input"] --> B["1. Preprocessing & Scaling"]
+    A[" Original Photo Input"] --> B["1. Preprocessing & Scaling"]
     B --> C["2. Gaussian Noise Filtering & Grayscale"]
     C --> D["3. Morphological Canny Edge Detection"]
     D --> E["4. Contour Discovery & Convex PolyDP"]
@@ -26,12 +26,12 @@ flowchart TD
     G --> I["6. Perspective Transform Matrix Calculation (Homography H)"]
     I --> J["7. Bilinear Warp Perspective Mapping"]
     J --> K["8. Multi-Mode Image Enhancement (CLAHE / Adaptive Threshold)"]
-    K --> L["📄 Final Scanned Document Output"]
+    K --> L[" Final Scanned Document Output"]
 ```
 
 ---
 
-## 🔬 Computer Vision Fundamentals & Mathematical Rationale
+##  Computer Vision Fundamentals & Mathematical Rationale
 
 ### 1. Preprocessing & Scaling
 - **Operation:** Aspect-ratio preserving downscaling ($MaxDim = 1000px$).
@@ -104,7 +104,7 @@ docvis/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Prerequisites
 - Python 3.10+
@@ -148,7 +148,7 @@ Open your web browser and navigate to:
 
 ---
 
-## 🖥️ User Interface & CV Debug Analysis Mode
+##  User Interface & CV Debug Analysis Mode
 
 The DocVis Web Workspace provides:
 
@@ -165,7 +165,7 @@ The DocVis Web Workspace provides:
 
 ---
 
-## 📊 Performance Benchmarks
+##  Performance Benchmarks
 
 Measured on standard Intel i7 / Apple M-series hardware:
 
@@ -180,7 +180,7 @@ Measured on standard Intel i7 / Apple M-series hardware:
 
 ---
 
-## 🔒 Robustness & Fallback Handling
+##  Robustness & Fallback Handling
 
 If an image contains extreme specular reflections, heavy occlusion, or a low-contrast white document on a white tablecloth:
 - The system automatically triggers **Fallback Mode** by generating an inset bounding box ($10\%$ frame margin).
@@ -188,13 +188,10 @@ If an image contains extreme specular reflections, heavy occlusion, or a low-con
 
 ---
 
-## 🌟 Future Improvements
+##  Future Improvements
 - **Automatic Deskewing via Radon Transform / Hough Lines:** Refine text orientation for documents photographed upside down or rotated $90^\circ/180^\circ$.
 - **Deep Edge Refinement (MobileNet-SSD / UNet):** Optional hybrid mode combining OpenCV geometry with lightweight boundary segmentation networks.
 - **Multi-page Batch PDF Export:** Stitch multiple processed document scans into a single compressed PDF.
 
 ---
 
-## 📜 License
-
-Distributed under the MIT License. Developed for Computer Vision Engineering portfolios and technical interview demonstrations.
